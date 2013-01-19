@@ -202,6 +202,8 @@
 	\ncork (Volvofinans)
 	\nmarijo (Eurocard)
 	\nd98rolb (Osuuspankki)
+	\nAndreas Gunnerås (Everydaycard)
+	\nEmil Andersson (Chalmrest)
      </string>
      
      
@@ -304,4 +306,6 @@
     <!-- Color Picker -->
     <string name="dialog_color_picker">Color Picker</string>
     <string name="press_color_to_apply">Press on Color to apply</string>    
+    
+    <string name="points">points</string>
 </resources>

@@ -42,7 +42,7 @@ public interface IBankTypes {
 	public final static int IKANOBANK = 18;
 	public final static int STEAM = 19;
 	public final static int DINERSCLUB = 20;
-    public final static int EUROBONUSMASTERCARD = 21;
+    public final static int SASEUROBONUSMASTERCARD = 21;
     public final static int RIKSLUNCHEN = 22;
     public final static int HEMKOP = 23;
     public final static int SEB = 24;
@@ -79,4 +79,10 @@ public interface IBankTypes {
     public final static int EVERYDAYCARD = 55;
 	public static final int AKELIUSINVEST = 56;
     public static final int MENIGA = 57;
+    public static final int RIKSKORTET = 58;
+    public static final int BIOKLUBBEN = 59;
+    public static final int CHALMREST = 60;
+    public static final int MARGINALEN = 61;
+    public static final int AKELIUSSPAR = 62;
+    public static final int SVENSKASPEL = 63;
 }

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.liato.bankdroid.banking.banks;
+package com.liato.bankdroid.banking.banks.Nordea;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
@@ -51,7 +54,7 @@ public class Nordea extends Bank {
 	private static final int BANKTYPE_ID = IBankTypes.NORDEA;
     private static final int INPUT_TYPE_USERNAME = InputType.TYPE_CLASS_PHONE;
     private static final int INPUT_TYPE_PASSWORD = InputType.TYPE_CLASS_PHONE;
-    private static final String INPUT_HINT_USERNAME = "ÅÅMMDD-XXXX";
+    private static final String INPUT_HINT_USERNAME = "ÅÅÅÅMMDDXXXX";
 
     private Pattern reCurrency = Pattern.compile("list-left\">\\s*Valuta\\s*</dt>\\s*<dd[^>]+>([^<]+)</dd>", Pattern.CASE_INSENSITIVE);
     private Pattern reBalance = Pattern.compile("list-left\">\\s*Summa\\s*([a-zA-Z]{3})\\s*</dt>\\s*<dd[^>]+>([^<]+)</", Pattern.CASE_INSENSITIVE);
@@ -103,6 +106,32 @@ public class Nordea extends Bank {
 			String response = urlopen.open(lp.getLoginTarget(), lp.getPostData());
 			if (response.contains("felaktiga uppgifter")) {
 				throw new LoginException(res.getText(R.string.invalid_username_password).toString());
+			}
+			else if (response.contains("nloggningar med ditt personnummer idag")) {
+		        Matcher matcher = reCSRF.matcher(response);
+		        if (!matcher.find()) {
+		            throw new BankException(res.getText(R.string.unable_to_find).toString()+" CSRF token.");
+		        }
+		        String csrftoken = matcher.group(1);
+		        Iterator<NameValuePair> it = lp.getPostData().iterator();
+		        while (it.hasNext()) {
+		            NameValuePair nv = it.next();
+                    if (nv.getName().equals("_csrf_token")) {
+                        it.remove();
+                        break;
+                    }
+		        }
+		        lp.getPostData().add(new BasicNameValuePair("_csrf_token", csrftoken));
+			    //Too many logins, we need to solve a captcha.
+			    Bitmap bm = BitmapFactory.decodeStream(urlopen.openStream("https://mobil.nordea.se/banking-nordea/nordea-c3/captcha.png"));
+			    String captcha = CaptchaBreaker.iMustBreakYou(bm);
+			    bm.recycle();
+			    bm = null;
+			    lp.getPostData().add(new BasicNameValuePair("captcha", captcha));
+	            response = urlopen.open(lp.getLoginTarget(), lp.getPostData());
+	            if (response.contains("felaktiga uppgifter")) {
+	                throw new LoginException(res.getText(R.string.invalid_username_password).toString());
+	            }
 			}
 			
 		} catch (ClientProtocolException e) {

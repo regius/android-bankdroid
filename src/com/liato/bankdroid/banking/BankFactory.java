@@ -22,11 +22,14 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 
 import com.liato.bankdroid.banking.banks.AkeliusInvest;
+import com.liato.bankdroid.banking.banks.AkeliusSpar;
 import com.liato.bankdroid.banking.banks.AmericanExpress;
 import com.liato.bankdroid.banking.banks.Audi;
 import com.liato.bankdroid.banking.banks.Avanza;
 import com.liato.bankdroid.banking.banks.AvanzaMini;
+import com.liato.bankdroid.banking.banks.Bioklubben;
 import com.liato.bankdroid.banking.banks.CSN;
+import com.liato.bankdroid.banking.banks.Chalmrest;
 import com.liato.bankdroid.banking.banks.Chevrolet;
 import com.liato.bankdroid.banking.banks.Coop;
 import com.liato.bankdroid.banking.banks.DanskeBank;
@@ -43,9 +46,8 @@ import com.liato.bankdroid.banking.banks.ICABanken;
 import com.liato.bankdroid.banking.banks.IKEA;
 import com.liato.bankdroid.banking.banks.IkanoBank;
 import com.liato.bankdroid.banking.banks.Jojo;
-import com.liato.bankdroid.banking.banks.Lansforsakringar;
+import com.liato.bankdroid.banking.banks.lansforsakringar.Lansforsakringar;
 import com.liato.bankdroid.banking.banks.McDonalds;
-import com.liato.bankdroid.banking.banks.Nordea;
 import com.liato.bankdroid.banking.banks.NordeaDK;
 import com.liato.bankdroid.banking.banks.Nordnet;
 import com.liato.bankdroid.banking.banks.Nordnetdirekt;
@@ -58,6 +60,7 @@ import com.liato.bankdroid.banking.banks.PlusGirot;
 import com.liato.bankdroid.banking.banks.Preem;
 import com.liato.bankdroid.banking.banks.Quintessentially;
 import com.liato.bankdroid.banking.banks.ResursBank;
+import com.liato.bankdroid.banking.banks.TicketRikskortet;
 import com.liato.bankdroid.banking.banks.Rikslunchen;
 import com.liato.bankdroid.banking.banks.SEB;
 import com.liato.bankdroid.banking.banks.SJPrio;
@@ -70,7 +73,6 @@ import com.liato.bankdroid.banking.banks.Skoda;
 import com.liato.bankdroid.banking.banks.SparbankenOresund;
 import com.liato.bankdroid.banking.banks.SparbankenSyd;
 import com.liato.bankdroid.banking.banks.Statoil;
-import com.liato.bankdroid.banking.banks.Steam;
 import com.liato.bankdroid.banking.banks.Swedbank;
 import com.liato.bankdroid.banking.banks.TestBank;
 import com.liato.bankdroid.banking.banks.Vasttrafik;
@@ -79,6 +81,9 @@ import com.liato.bankdroid.banking.banks.Volkswagen;
 import com.liato.bankdroid.banking.banks.Volvofinans;
 import com.liato.bankdroid.banking.banks.Wallet;
 import com.liato.bankdroid.banking.banks.Meniga;
+import com.liato.bankdroid.banking.banks.Marginalen;
+import com.liato.bankdroid.banking.banks.Nordea.Nordea;
+import com.liato.bankdroid.banking.banks.SvenskaSpel;
 import com.liato.bankdroid.banking.exceptions.BankException;
 import com.liato.bankdroid.db.Crypto;
 import com.liato.bankdroid.db.DBAdapter;
@@ -96,6 +101,8 @@ public class BankFactory {
             return new TestBank(context);
         case IBankTypes.AKELIUSINVEST:
             return new AkeliusInvest(context);
+        case IBankTypes.AKELIUSSPAR:
+            return new AkeliusSpar(context);
         case IBankTypes.SWEDBANK:
             return new Swedbank(context);
 		case IBankTypes.NORDEA:
@@ -136,7 +143,7 @@ public class BankFactory {
             return new DinersClub(context);
         case IBankTypes.IKANOBANK:
             return new IkanoBank(context);
-        case IBankTypes.EUROBONUSMASTERCARD:
+        case IBankTypes.SASEUROBONUSMASTERCARD:
         	return new EurobonusMastercard(context);
         case IBankTypes.RIKSLUNCHEN:
             return new Rikslunchen(context);            
@@ -208,6 +215,16 @@ public class BankFactory {
             return new Everydaycard(context);
         case IBankTypes.MENIGA:
             return new Meniga(context);
+        case IBankTypes.RIKSKORTET:
+            return new TicketRikskortet(context);
+        case IBankTypes.BIOKLUBBEN:
+            return new Bioklubben(context);
+        case IBankTypes.CHALMREST:
+        	return new Chalmrest(context);
+        case IBankTypes.MARGINALEN:
+            return new Marginalen(context);
+        case IBankTypes.SVENSKASPEL:
+            return new SvenskaSpel(context);
 		default:
 			throw new BankException("BankType id not found.");
 		}
@@ -217,6 +234,7 @@ public class BankFactory {
 	public static ArrayList<Bank> listBanks(Context context) {
 		ArrayList<Bank> banks = new ArrayList<Bank>();
 		banks.add(new AkeliusInvest(context));
+		banks.add(new AkeliusSpar(context));
 		banks.add(new Swedbank(context));
 		banks.add(new Nordea(context));
 		banks.add(new ICABanken(context));
@@ -234,7 +252,7 @@ public class BankFactory {
         banks.add(new PayPal(context));
         banks.add(new Payson(context));
         banks.add(new Jojo(context));
-        banks.add(new Steam(context));
+        //banks.add(new Steam(context));
         banks.add(new DinersClub(context));
         banks.add(new IkanoBank(context));
         banks.add(new EurobonusMastercard(context));
@@ -273,6 +291,12 @@ public class BankFactory {
         banks.add(new Vasttrafik(context));
         banks.add(new Everydaycard(context));
         banks.add(new Meniga(context));
+        banks.add(new TicketRikskortet(context));
+        banks.add(new Bioklubben(context));
+        banks.add(new Chalmrest(context));
+        banks.add(new Marginalen(context));
+        banks.add(new SvenskaSpel(context));
+        
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean("debug_mode", false)) { 
             banks.add(new TestBank(context));
